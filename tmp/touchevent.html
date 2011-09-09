@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>touch event</title>
+</head>
+<body>
+<ul></ul>
+<script>
+function $$(selector) { return [].slice.call(document.querySelectorAll(selector)); }
+function $N(tag) { return document.createElement(tag); }
+function $T(text) { return document.createTextNode(text); }
+
+var ul = $$('ul')[0];
+
+function prepend(evt) {
+	ul.insertBefore($N('li'), ul.firstChild).appendChild($T(
+		'type: ' + evt.type + ', length: ' + evt.touches.length
+	));
+	evt.preventDefault();
+	evt.stopPropagation();
+}
+
+document.addEventListener('touchstart', prepend);
+document.addEventListener('touchmove', function (evt) {
+	evt.preventDefault();
+	evt.stopPropagation();
+});
+document.addEventListener('touchend', prepend);
+
+</script>
+</body>
+</html>

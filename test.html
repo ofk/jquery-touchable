@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>jquery.touchable test</title>
+<style>
+body {
+	background: #eee;
+}
+
+div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100px;
+	height: 100px;
+	background: #fff;
+	box-shadow: 0 0 20px #000;
+	-moz-box-shadow: 0 0 20px #000;
+	-webkit-box-shadow: 0 0 20px #000;
+	cursor: pointer;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="jquery.touchable.min.js"></script>
+<script>
+$(function () {
+
+$('div').each(function (i) {
+	var $this = $(this),
+	    w = $this.width(),
+	    h = $this.height();
+	$this.css({
+		top: h / 4 + h * 1.25 * i,
+		left: w / 4 + w * 1.25 * i
+	})
+});
+
+var drag = null, zIndex = 1;
+
+$(document)
+	.mousedown(function (evt) {
+		if (drag || evt.target.tagName !== 'DIV') {
+			return;
+		}
+		drag = {
+			event: evt,
+			target: evt.target
+		};
+		var $target = $(drag.target);
+		drag.top = parseInt($target.css('top'), 10);
+		drag.left = parseInt($target.css('left'), 10);
+		$target.css({
+			zIndex: ++zIndex,
+			backgroundColor: '#ffc'
+		});
+		return false;
+	})
+	.mousemove(function (evt) {
+		if (!drag) return;
+		var dx = evt.pageX - drag.event.pageX,
+		    dy = evt.pageY - drag.event.pageY;
+		$(drag.target).css({
+			top: drag.top + dy,
+			left: drag.left + dx
+		});
+		return false;
+	})
+	.mouseup(function (evt) {
+		if (!drag) return;
+		var dx = evt.pageX - drag.event.pageX,
+		    dy = evt.pageY - drag.event.pageY;
+		$(drag.target).css({
+			top: drag.top + dy,
+			left: drag.left + dx,
+			backgroundColor: ''
+		});
+		drag = null;
+		return false;
+	});
+
+});
+</script>
+</head>
+<body>
+
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+
+</body>
+</html>

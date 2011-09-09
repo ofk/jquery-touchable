@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>touch canvas</title>
+<style>
+body { background: #ccc; }
+span { color: #fff; display: inline-block; padding: .25em 1em; }
+canvas { background: #fff; }
+td { vertical-align: top; }
+</style>
+</head>
+<body>
+<div></div>
+<table>
+<tr>
+<td><canvas width="500" height="500"></canvas></td>
+<td><ul id="finger0"></ul></td>
+<td><ul id="finger1"></ul></td>
+<td><ul id="finger2"></ul></td>
+<td><ul id="finger3"></ul></td>
+<td><ul id="finger4"></ul></td>
+</tr>
+</table>
+
+<script>
+function $$(selector) { return [].slice.call(document.querySelectorAll(selector)); }
+function $N(tag) { return document.createElement(tag); }
+function $T(text) { return document.createTextNode(text); }
+
+var div = $$('div')[0];
+
+var colors = '#900 #090 #009 #099 #909 #990 #999'.split(' ');
+var default_color = colors[colors.length - 1];
+colors.forEach(function (color, i) {
+	var span = $N('span');
+	span.style.backgroundColor = color;
+	div.appendChild(span).appendChild($T(i));
+	div.appendChild($T(' '));
+});
+
+var canvas = $$('canvas')[0],
+    ctx = canvas.getContext('2d');
+
+function draw(x, y, color) {
+	ctx.fillStyle = color;
+	ctx.beginPath();
+	ctx.arc(x, y, 10, 0, Math.PI * 2, true);
+	ctx.closePath();
+	ctx.fill();
+}
+
+canvas.addEventListener('touchmove', function (evt) {
+	for (var i = 0, iz = evt.touches.length; i < iz; ++i) {
+		var touch = evt.touches[i];
+		draw(touch.clientX, touch.clientY, colors[i] || default_color);
+		var node = $$('#finger' + i)[0];
+		if (node) {
+			if (node.firstChild && node.firstChild.firstChild.nodeValue == touch.identifier) {
+			}
+			else {
+				node.insertBefore($N('li'), node.firstChild).appendChild($T(touch.identifier));
+				while (node.childNodes.length > 10) {
+					node.removeChild(node.lastChild);
+				}
+			}
+		}
+	}
+	evt.preventDefault();
+	evt.stopPropagation();
+});
+
+</script>
+</body>
+</html>
